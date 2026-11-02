@@ -12,12 +12,13 @@ public class TransactionController  {
     }
 
     @PostMapping
-    public Transaction receiveTransaction(@RequestBody Transaction transaction){
-
+    public FraudResult receiveTransaction(@RequestBody Transaction transaction){
         boolean suspicious = fraudDetectionService.isSuspicious(transaction);
-        System.out.println("Transaction received: " + transaction.getTransactionId());
-        System.out.println("Suspicious: " +suspicious);
 
-        return transaction;
+        return new FraudResult(
+                transaction.getTransactionId(),
+                transaction.getAmount(),
+                suspicious
+        );
     }
 }
