@@ -14,11 +14,13 @@ public class TransactionController  {
     @PostMapping
     public FraudResult receiveTransaction(@RequestBody Transaction transaction){
         boolean suspicious = fraudDetectionService.isSuspicious(transaction);
+        String reason = suspicious ? "Transaction exceeds R10 000 threshold" : "No fraud rules triggered";
 
         return new FraudResult(
                 transaction.getTransactionId(),
                 transaction.getAmount(),
-                suspicious
+                suspicious,
+                reason
         );
     }
 }
