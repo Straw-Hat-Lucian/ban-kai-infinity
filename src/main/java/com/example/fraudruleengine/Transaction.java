@@ -1,11 +1,21 @@
 package com.example.fraudruleengine;
 
 import java.math.BigDecimal;
+import  jakarta.persistence.Entity;
+import  jakarta.persistence.Id;
+import  jakarta.persistence.Table;
+import  jakarta.persistence.Column;
 
+@Entity
+@Table(name = "transactions")
 public class Transaction {
+    @Id
     private String transactionId;
+    @Column(nullable = false)
     private String customerId;
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
+    @Column(nullable = false)
     private String category;
 
     public Transaction(){
