@@ -1,7 +1,7 @@
 package com.example.fraudruleengine;
 
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -14,7 +14,9 @@ public class TransactionController  {
     @PostMapping
     public FraudResult receiveTransaction(@RequestBody Transaction transaction){
         boolean suspicious = fraudDetectionService.isSuspicious(transaction);
-        String reason = suspicious ? "Transaction exceeds R10 000 threshold" : "No fraud rules triggered";
+        String reason = fraudDetectionService.getFraudReason(transaction);
+        transaction.setSuspicious(suspicious);
+        transaction.setFraudReason(reason);
 
         return new FraudResult(
                 transaction.getTransactionId(),
@@ -22,5 +24,10 @@ public class TransactionController  {
                 suspicious,
                 reason
         );
+    }
+
+    @GetMapping
+    public List<Transaction> getAllTransactions(){
+        return fraudDetectionService.getAllTransactions();
     }
 }

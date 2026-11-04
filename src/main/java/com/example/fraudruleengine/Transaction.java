@@ -17,6 +17,8 @@ public class Transaction {
     private BigDecimal amount;
     @Column(nullable = false)
     private String category;
+    private boolean suspicious;
+    private  String fraudReason;
 
     public Transaction(){
 
@@ -58,6 +60,22 @@ public class Transaction {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean isSuspicious() {
+        return suspicious;
+    }
+
+    public void setSuspicious(boolean suspicious) {
+        this.suspicious = suspicious;
+    }
+
+    public String getFraudReason(){
+        return fraudReason;
+    }
+
+    public void setFraudReason(String fraudReason){
+        this.fraudReason = fraudReason;
     }
 
 }
