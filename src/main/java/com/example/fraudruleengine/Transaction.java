@@ -7,20 +7,34 @@ import  jakarta.persistence.Table;
 import  jakarta.persistence.Column;
 import  jakarta.persistence.Enumerated;
 import  jakarta.persistence.EnumType;
+import  jakarta.validation.constraints.NotBlank;
+import  jakarta.validation.constraints.NotNull;
+import  jakarta.validation.constraints.DecimalMin;
 
 @Entity
 @Table(name = "transactions")
 public class Transaction {
+    @NotBlank
     @Id
     private String transactionId;
+
+    @NotBlank
     @Column(nullable = false)
     private String customerId;
+
+    @NotNull
+    @DecimalMin(value = "0.01")
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
+
+    @NotBlank
     @Column(nullable = false)
     private String category;
+
     private boolean suspicious;
+
     private  String fraudReason;
+
     @Enumerated(EnumType.STRING)
     private FraudSeverity severity;
 

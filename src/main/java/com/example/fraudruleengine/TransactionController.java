@@ -2,6 +2,10 @@ package com.example.fraudruleengine;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import jakarta.validation.Valid;
+import java.util.Optional;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -12,7 +16,7 @@ public class TransactionController  {
     }
 
     @PostMapping
-    public FraudResult receiveTransaction(@RequestBody Transaction transaction){
+    public FraudResult receiveTransaction(@Valid @RequestBody Transaction transaction){
         boolean suspicious = fraudDetectionService.isSuspicious(transaction);
         String reason = fraudDetectionService.getFraudReason(transaction);
         transaction.setSuspicious(suspicious);
@@ -25,12 +29,18 @@ public class TransactionController  {
                 transaction.getTransactionId(),
                 transaction.getAmount(),
                 suspicious,
-                reason
+                reason,
+                transaction.getSeverity()
         );
     }
 
     @GetMapping
     public List<Transaction> getAllTransactions(){
         return fraudDetectionService.getAllTransactions();
+    }
+
+    @GetMapping("/{transactionId}")
+    public Optional<Transaction> getTransactionById(@PathVariable String transactionId){
+        return fraudDetectionService.getTransactionById(transactionId);
     }
 }

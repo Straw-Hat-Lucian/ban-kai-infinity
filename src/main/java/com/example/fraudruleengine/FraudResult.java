@@ -7,12 +7,14 @@ public class FraudResult {
     private BigDecimal amount;
     private boolean suspicious;
     private String reason;
+    private FraudSeverity severity;
 
-    public FraudResult(String transactionId, BigDecimal amount, boolean suspicious, String reason) {
+    public FraudResult(String transactionId, BigDecimal amount, boolean suspicious, String reason, FraudSeverity  severity) {
         this.transactionId = transactionId;
         this.amount = amount;
         this.suspicious = suspicious;
         this.reason = reason;
+        this.severity = severity;
     }
 
     public String getTransactionId( ){
@@ -28,5 +30,9 @@ public class FraudResult {
     }
     public String getReason() {
         return reason;
+    }
+
+    public FraudSeverity getSeverity() {
+        return severity;
     }
 }
