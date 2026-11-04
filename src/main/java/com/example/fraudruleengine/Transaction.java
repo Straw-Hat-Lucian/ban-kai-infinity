@@ -5,6 +5,8 @@ import  jakarta.persistence.Entity;
 import  jakarta.persistence.Id;
 import  jakarta.persistence.Table;
 import  jakarta.persistence.Column;
+import  jakarta.persistence.Enumerated;
+import  jakarta.persistence.EnumType;
 
 @Entity
 @Table(name = "transactions")
@@ -19,6 +21,8 @@ public class Transaction {
     private String category;
     private boolean suspicious;
     private  String fraudReason;
+    @Enumerated(EnumType.STRING)
+    private FraudSeverity severity;
 
     public Transaction(){
 
@@ -76,6 +80,14 @@ public class Transaction {
 
     public void setFraudReason(String fraudReason){
         this.fraudReason = fraudReason;
+    }
+
+    public FraudSeverity getSeverity(){
+        return severity;
+    }
+
+    public void setSeverity(FraudSeverity severity){
+        this.severity = severity;
     }
 
 }

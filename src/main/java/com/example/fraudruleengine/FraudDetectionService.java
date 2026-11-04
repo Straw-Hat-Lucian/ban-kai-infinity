@@ -36,6 +36,17 @@ public class FraudDetectionService {
         return "NO_FRAUD_RULE_TRIGGERED";
     }
 
+    public FraudSeverity getFraudSeverity(Transaction transaction){
+        if (transaction.getAmount().compareTo(TRANSACTION_LIMIT) > 0) {
+            return FraudSeverity.HIGH;
+        }
+        if (HIGH_RISK_CATEGORY.equalsIgnoreCase(transaction.getCategory())) {
+            return FraudSeverity.MEDIUM;
+        }
+
+        return FraudSeverity.LOW;
+    }
+
 
     public Transaction saveTransaction(Transaction transaction){
         return transactionRepository.save(transaction);

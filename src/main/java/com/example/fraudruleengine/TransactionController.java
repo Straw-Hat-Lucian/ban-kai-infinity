@@ -17,6 +17,9 @@ public class TransactionController  {
         String reason = fraudDetectionService.getFraudReason(transaction);
         transaction.setSuspicious(suspicious);
         transaction.setFraudReason(reason);
+        transaction.setSeverity(fraudDetectionService.getFraudSeverity(transaction));
+
+        transaction = fraudDetectionService.saveTransaction(transaction);
 
         return new FraudResult(
                 transaction.getTransactionId(),
