@@ -98,4 +98,35 @@ public class FraudDetectionServiceTest {
                 fraudDetectionService.getFraudSeverity(transaction)
         );
     }
+
+
+    @Test
+    void shouldDetectDuplicateTransactions() {
+
+        when(transactionRepository.countDuplicateTransactions(
+                eq("CUST-DUP-TEST"),
+                eq(new BigDecimal("900")),
+                eq("TRANSFER"),
+                any(LocalDateTime.class)
+        )).thenReturn(1L);
+
+        Transaction transaction = new Transaction(
+                "DUP-TEST-002",
+                "CUST-DUP-TEST",
+                new BigDecimal("900"),
+                "TRANSFER"
+        );
+
+        assertTrue(fraudDetectionService.isSuspicious(transaction));
+
+        assertEquals(
+                "DUPLICATE_TRANSACTIONS",
+                fraudDetectionService.getFraudReason(transaction)
+        );
+
+        assertEquals(
+                FraudSeverity.HIGH,
+                fraudDetectionService.getFraudSeverity(transaction)
+        );
+    }
 }

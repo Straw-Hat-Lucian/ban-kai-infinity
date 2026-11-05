@@ -32,7 +32,9 @@ public class FraudDetectionService {
                 );
 
         boolean rapidTransactions = hasRapidTransactions(transaction);
-        return highValue || highRiskCategory || rapidTransactions;
+        boolean duplicateTransactions = hasDuplicateTransactions(transaction);
+
+        return highValue || highRiskCategory || rapidTransactions || duplicateTransactions;
     }
 
     private boolean hasRapidTransactions(Transaction transaction){
@@ -41,6 +43,18 @@ public class FraudDetectionService {
                         transaction.getCustomerId(),
                         java.time.LocalDateTime.now().minusMinutes(5)
                 ) >= 2;
+
+    }
+
+    private boolean hasDuplicateTransactions(Transaction transaction){
+        return transaction.getCustomerId() != null &&
+                transaction.getCategory() != null &&
+                transactionRepository.countDuplicateTransactions(
+                        transaction.getCustomerId(),
+                        transaction.getAmount(),
+                        transaction.getCategory(),
+                        java.time.LocalDateTime.now().minusMinutes(5)
+                ) >=1;
     }
 
 
@@ -59,6 +73,10 @@ public class FraudDetectionService {
             return "RAPID_TRANSACTIONS";
         }
 
+        if (hasDuplicateTransactions(transaction)) {
+            return "DUPLICATE_TRANSACTIONS";
+        }
+
         return "NO_FRAUD_RULE_TRIGGERED";
     }
 
@@ -70,6 +88,10 @@ public class FraudDetectionService {
             return FraudSeverity.MEDIUM;
         }
         if (hasRapidTransactions(transaction)) {
+            return FraudSeverity.HIGH;
+        }
+
+        if (hasDuplicateTransactions(transaction)) {
             return FraudSeverity.HIGH;
         }
 
