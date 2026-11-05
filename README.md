@@ -1,7 +1,8 @@
 BAN-KAI INFINITY
+---
 Financial Transaction Intelligence, Fraud Detection & Risk Analysis Platform
 Intelligent Transaction Monitoring | Automated Fraud Detection | Risk Classification
-
+-------
 1. Introduction
 BAN-KAI INFINITY is a financial transaction intelligence and fraud detection platform developed using Java and Spring Boot.
 
@@ -15,7 +16,7 @@ The project also incorporates Docker containerisation, automated testing and glo
 
 2. Core Capabilities
    Feature
-
+--------------
 Description
 
 Transaction Processing
@@ -60,7 +61,7 @@ Supports deployment using Docker and Docker Compose.
 
 3. Technology Stack
    Backend Development
-
+---------------
 Java 21
 Spring Boot
 Spring Web
@@ -89,7 +90,7 @@ IntelliJ IDEA
 Git & GitHub
 4. Fraud Detection Engine
    The core functionality of BAN-KAI INFINITY is its fraud detection engine, which evaluates incoming transactions against multiple detection criteria.
-
+------------------------------
 4.1 High-Value Transaction Detection
 Transactions with an amount equal to or greater than R10,000.00 are flagged as suspicious.
 
@@ -148,7 +149,7 @@ Suspicious transactions are recorded and returned through the API with their cor
 
 5. System Architecture
    BAN-KAI INFINITY follows a layered backend architecture that separates application responsibilities.
-
+------------------
                  CLIENT / API REQUEST
                          |
                          v
@@ -195,7 +196,7 @@ Provides centralised handling of validation errors and database integrity except
 
 6. Database Design
    BAN-KAI INFINITY uses PostgreSQL as its relational database management system.
-
+--------------
 Transaction records are persisted to support retrieval and transaction analysis.
 
 Transaction Data
@@ -241,7 +242,7 @@ The application uses Spring Data JPA for database operations and transaction per
 
 7. REST API Documentation
    The application exposes RESTful endpoints for transaction submission and retrieval.
-
+--------------
 Base URL
 http://localhost:8080
 Available Endpoints
@@ -303,7 +304,7 @@ Swagger allows developers to explore available endpoints, submit requests and in
 8. Installation & Setup
    Prerequisites
    Before running the application, ensure the following are installed:
-
+-----------------
 Java 21 or compatible configured JDK.
 IntelliJ IDEA or another Java IDE.
 Docker Desktop (for containerised execution).
@@ -317,7 +318,7 @@ Navigate to the project directory:
 cd fraud-rule-engine
 9. Running with Docker
    BAN-KAI INFINITY supports Docker Compose to simplify application deployment and database management.
-
+---------------
 Docker Compose manages two primary services:
 
 Application Container: Runs the Spring Boot application.
@@ -352,7 +353,7 @@ Important: Avoid using docker compose down -v unless you intentionally want to d
 
 10. Running Locally Through IntelliJ IDEA
     The application can also be executed directly through IntelliJ IDEA.
-
+-------------
 Clone or open the project in IntelliJ IDEA.
 Ensure the required Java SDK is configured.
 Start PostgreSQL.
@@ -364,7 +365,7 @@ The Spring Boot application starts on port 8080 by default.
 
 11. Automated Testing
     BAN-KAI INFINITY includes automated unit tests using JUnit and Mockito.
-
+-----------------
 The tests evaluate the fraud detection service under different transaction scenarios.
 
 Test Coverage
@@ -385,7 +386,7 @@ A successful test execution should conclude with:
 BUILD SUCCESS
 12. Validation & Exception Handling
     The application implements request validation and centralised exception handling to improve API reliability.
-
+-------------
 Examples of handled HTTP responses include:
 
 HTTP Status
@@ -412,7 +413,7 @@ Fraud detection alerts do not automatically reject transactions. Suspicious tran
 
 13. Security Considerations
     The project incorporates basic security-conscious development practices:
-
+-------------
 Environment variables are used to configure database credentials for Docker Compose.
 The .env file is excluded through .gitignore.
 The .dockerignore file excludes unnecessary files and sensitive local configuration from the Docker build context.
@@ -422,7 +423,7 @@ Note: The current implementation is a development-stage application and does not
 
 14. Potential Future Enhancements
     BAN-KAI INFINITY provides a foundation for further financial technology development.
-
+------------
 Potential enhancements include:
 
 Configurable fraud detection thresholds.
@@ -436,7 +437,7 @@ Advanced risk scoring algorithms.
 Integration with external financial transaction services.
 15. Project Information
     Project Name: BAN-KAI INFINITY
-
+---------------
 Category: Financial Technology / Backend Development
 
 Primary Language: Java
