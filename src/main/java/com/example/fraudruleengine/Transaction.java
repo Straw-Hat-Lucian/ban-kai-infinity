@@ -10,6 +10,8 @@ import  jakarta.persistence.EnumType;
 import  jakarta.validation.constraints.NotBlank;
 import  jakarta.validation.constraints.NotNull;
 import  jakarta.validation.constraints.DecimalMin;
+import java.time.LocalDateTime;
+import jakarta.persistence.PrePersist;
 
 @Entity
 @Table(name = "transactions")
@@ -37,6 +39,16 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     private FraudSeverity severity;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void setCreatedAt(){
+        if (createdAt == null){
+            createdAt = LocalDateTime.now();
+        }
+    }
 
     public Transaction(){
 
@@ -102,6 +114,10 @@ public class Transaction {
 
     public void setSeverity(FraudSeverity severity){
         this.severity = severity;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
 }

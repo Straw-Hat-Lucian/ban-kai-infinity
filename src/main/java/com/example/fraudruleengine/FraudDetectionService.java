@@ -26,19 +26,37 @@ public class FraudDetectionService {
 
     public boolean isSuspicious(Transaction transaction){
         boolean highValue = transaction.getAmount().compareTo(TRANSACTION_LIMIT) >= 0;
-        boolean highRiskCategory = transaction.getCategory() != null && HIGH_RISK_CATEGORIES.contains(transaction.getCategory().toUpperCase()
-        );
+        boolean highRiskCategory = transaction.getCustomerId() != null &&
+                HIGH_RISK_CATEGORIES.contains(
+                        transaction.getCategory().toUpperCase()
+                );
 
-        return highValue || highRiskCategory;
+        boolean rapidTransactions = hasRapidTransactions(transaction);
+        return highValue || highRiskCategory || rapidTransactions;
     }
+
+    private boolean hasRapidTransactions(Transaction transaction){
+        return transaction.getCustomerId() != null &&
+                transactionRepository.countRecentTransactions(
+                        transaction.getCustomerId(),
+                        java.time.LocalDateTime.now().minusMinutes(5)
+                ) >= 2;
+    }
+
 
     public String getFraudReason(Transaction transaction){
 
-        if (transaction.getAmount().compareTo(TRANSACTION_LIMIT) > 0) {
+        if (transaction.getAmount().compareTo(TRANSACTION_LIMIT) >= 0) {
             return "HIGH_VALUE_TRANSACTION";
         }
-        if (transaction.getCategory() != null && HIGH_RISK_CATEGORIES.contains(transaction.getCategory().toUpperCase())) {
+
+        if (transaction.getCategory() != null &&
+                HIGH_RISK_CATEGORIES.contains(transaction.getCategory().toUpperCase())) {
             return "HIGH_RISK_CATEGORY";
+        }
+
+        if (hasRapidTransactions(transaction)) {
+            return "RAPID_TRANSACTIONS";
         }
 
         return "NO_FRAUD_RULE_TRIGGERED";
@@ -50,6 +68,9 @@ public class FraudDetectionService {
         }
         if (transaction.getCategory() != null && HIGH_RISK_CATEGORIES.contains(transaction.getCategory().toUpperCase())) {
             return FraudSeverity.MEDIUM;
+        }
+        if (hasRapidTransactions(transaction)) {
+            return FraudSeverity.HIGH;
         }
 
         return FraudSeverity.LOW;

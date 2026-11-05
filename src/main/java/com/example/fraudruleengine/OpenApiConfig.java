@@ -12,7 +12,7 @@ public class OpenApiConfig {
     public OpenAPI bankaiCoreAPI() {
         return new OpenAPI()
                 .info(new Info()
-                .title("BANKAI Core")
+                .title("BAN-KAI INFINITY")
                                 .description("Financial Transaction Intelligence, Fraud Detection and Risk Analysis Platform")
                 .version("1.0")
                 );

@@ -8,6 +8,11 @@ import org.mockito.MockitoAnnotations;
 
 import  java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDateTime;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+
 
 public class FraudDetectionServiceTest {
     @Mock
@@ -64,5 +69,33 @@ public class FraudDetectionServiceTest {
                 fraudDetectionService.getFraudSeverity(transaction);
 
         assertEquals(FraudSeverity.MEDIUM, severity);
+    }
+
+    @Test
+    void shouldDetectRapidTransaction(){
+
+        when(transactionRepository.countRecentTransactions(
+                eq("CUST-RAPID-TEST"),
+                any(LocalDateTime.class)
+        )).thenReturn(2L);
+
+        Transaction transaction = new Transaction(
+                "RAPID-TEST-003",
+                "CUST-RAPID-TEST",
+                new BigDecimal("900.00"),
+                "TRANSFER"
+        );
+
+        assertTrue(fraudDetectionService.isSuspicious(transaction));
+
+        assertEquals(
+                "RAPID_TRANSACTIONS",
+                fraudDetectionService.getFraudReason(transaction)
+        );
+
+        assertEquals(
+                FraudSeverity.HIGH,
+                fraudDetectionService.getFraudSeverity(transaction)
+        );
     }
 }
