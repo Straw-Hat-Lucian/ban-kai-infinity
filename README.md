@@ -1,290 +1,194 @@
+
 BAN-KAI INFINITY
----
+
 Financial Transaction Intelligence, Fraud Detection & Risk Analysis Platform
 Intelligent Transaction Monitoring | Automated Fraud Detection | Risk Classification
--------
+
 1. Introduction
-BAN-KAI INFINITY is a financial transaction intelligence and fraud detection platform developed using Java and Spring Boot.
 
-The system is designed to analyse financial transactions, identify potentially fraudulent activity and classify suspicious transactions according to predefined detection rules.
+BAN-KAI INFINITY is a financial platform built with Java 21 and Spring Boot. It is designed to automatically scan financial transactions in real-time, flag suspicious activities, and rate them by risk level.
+The system uses rules to check transaction amounts, how fast a user is making transactions (velocity), high-risk categories, and accidental double-payments (duplicates). It saves all records to a PostgreSQL database and includes an interactive webpage (Swagger UI) where you can test the system's endpoints directly.
 
-By evaluating transaction values, customer activity, transaction categories and duplicate transaction patterns, BAN-KAI INFINITY provides a structured approach to identifying financial risk.
+Main Highlights
 
-The application exposes RESTful API endpoints, integrates with a PostgreSQL database for persistent storage, and provides interactive API documentation through Swagger UI.
-
-The project also incorporates Docker containerisation, automated testing and global exception handling to support a structured and maintainable backend application.
+• Web API Ready: Ready to receive transaction data from other apps or front-end screens.
+• Database Protected: Saves a permanent audit history using a PostgreSQL database.
+• Easy Testing: Includes a visual webpage layout to check how your endpoints react.
+• Docker Setup: Run the entire backend engine and database together using just one terminal command.
 
 2. Core Capabilities
-   Feature
---------------
-Description
 
-Transaction Processing
 
-Accepts and processes financial transaction events through REST APIs.
+Feature	Simple Description
+Transaction Processing	Takes in financial transaction data securely via REST web links.
+High-Value Detection	Flags any transaction that crosses a specific monetary limit.
+High-Risk Categories	Instantly flags activities involving crypto, gambling, or cash advances.
+Rapid Activity Check	Alerts you if a customer sends multiple transactions in a very short time.
+Duplicate Prevention	Flags double-submitting errors (same ID, price, and type within minutes).
+Risk Levels	Labels transactions as LOW, MEDIUM, or HIGH risk.
+Database Storage	Permanently records all processed transactions to a secure database history.
+API Web Documentation	Generates an interactive web guide (Swagger UI) for developers.
+Error Handling	Catches typing mistakes or database bugs cleanly without crashing.
+Containerisation	Packs the code up so it boots identically on any machine with Docker.
 
-High-Value Detection
-
-Identifies transactions that meet or exceed a predefined financial threshold.
-
-High-Risk Categories
-
-Flags transactions associated with predefined high-risk categories.
-
-Rapid Transaction Detection
-
-Identifies multiple transactions from the same customer within a short period.
-
-Duplicate Detection
-
-Identifies transactions with matching customer IDs, amounts and categories within a defined time window.
-
-Risk Classification
-
-Assigns LOW, MEDIUM or HIGH severity levels.
-
-Database Integration
-
-Stores and retrieves transaction records using PostgreSQL.
-
-API Documentation
-
-Provides interactive endpoint documentation through Swagger UI.
-
-Exception Handling
-
-Handles invalid input and database integrity errors.
-
-Containerisation
-
-Supports deployment using Docker and Docker Compose.
 
 3. Technology Stack
-   Backend Development
----------------
-Java 21
-Spring Boot
-Spring Web
-Spring Data JPA
-Database & Persistence
 
-PostgreSQL
-Hibernate / JPA
-Build & Dependency Management
+• Language & Core: Java 21, Spring Boot (Spring Web, Spring Data JPA)
+• Database System: PostgreSQL, Hibernate
+• Dependency Manager: Apache Maven (with Maven Wrapper)
+• Code Testing: JUnit, Mockito
+• Visual Documentation: Swagger UI, OpenAPI 3
+• Environment Tools: Docker, Docker Compose, IntelliJ IDEA, Git
 
-Apache Maven
-Maven Wrapper
-Testing
-
-JUnit
-Mockito
-API Documentation
-
-Swagger UI
-OpenAPI
-Containerisation & Development Tools
-
-Docker
-Docker Compose
-IntelliJ IDEA
-Git & GitHub
 4. Fraud Detection Engine
-   The core functionality of BAN-KAI INFINITY is its fraud detection engine, which evaluates incoming transactions against multiple detection criteria.
-------------------------------
-4.1 High-Value Transaction Detection
-Transactions with an amount equal to or greater than R10,000.00 are flagged as suspicious.
 
-Detection threshold: R10,000.00
+The system acts like a real-time filter. When a new transaction arrives, it passes through four distinct checks before receiving its final risk classification.
 
-Severity: HIGH
+4.1 High-Value Transactions
 
-4.2 High-Risk Transaction Categories
-Transactions belonging to predefined high-risk categories are flagged for additional attention.
+Any transaction equal to or greater than R10,000.00 triggers this rule.
+• Trigger Limit: ≥ R10,000.00
+• Risk Assigned: HIGH
 
-Supported categories:
+4.2 High-Risk Industries
 
-GAMBLING
-CRYPTO
-CASH_ADVANCE
-Severity: MEDIUM
+Transactions checking into industries prone to chargebacks or quick money moves are tagged immediately.
+• Monitored Sectors: GAMBLING, CRYPTO, CASH_ADVANCE
+• Risk Assigned: MEDIUM
 
-4.3 Rapid Transaction Detection
-The system evaluates recent transaction activity associated with a customer.
+4.3 Rapid Transaction Spams (Velocity)
 
-Multiple transactions from the same customer within a five-minute period can trigger a fraud alert.
+The software watches user action frequency. Multiple actions sent by the same user within minutes are intercepted.
+• Time Check Window: 5 Minutes
+• Risk Assigned: HIGH
 
-Severity: HIGH
+4.4 Duplicate Payments
 
-4.4 Duplicate Transaction Detection
-The system identifies potentially duplicated transactions by evaluating:
+Protects users from double-clicking an payment button by looking for identical values hitting the engine simultaneously.
+• Attributes Inspected: Same Customer ID, Same Amount, Same Category
+• Time Check Window: 5 Minutes
+• Risk Assigned: HIGH
 
-Customer ID
-Transaction amount
-Transaction category
-Transaction timestamp
-Matching transactions within the defined five-minute period trigger a fraud alert.
+4.5 Severity Flow Matrix
 
-Severity: HIGH
-
-4.5 Risk Severity Classification
-Every processed transaction receives a severity classification.
-
-Severity
-
-Classification
-
-LOW
-
-No fraud detection rule triggered.
-
-MEDIUM
-
-A high-risk transaction category was detected.
-
-HIGH
-
-A high-value, rapid or duplicate transaction was detected.
-
-Suspicious transactions are recorded and returned through the API with their corresponding fraud detection reason and severity level.
+text
+[ Incoming Transaction ]
+|
++---> Matches High-Value, Rapid, or Duplicate? ---> HIGH RISK
+|
++---> Matches High-Risk Category Only? ----------> MEDIUM RISK
+|
++---> Matches No Rules? --------------------------> LOW RISK
+Use code with caution.
+Important Rule Logic: Suspicious transactions are not rejected or blocked from completing. They are safely recorded, labeled with the exact failure reason, and stored in the database so an analyst can look them over later.
 
 5. System Architecture
-   BAN-KAI INFINITY follows a layered backend architecture that separates application responsibilities.
-------------------
-                 CLIENT / API REQUEST
-                         |
-                         v
-                 TRANSACTION CONTROLLER
-                         |
-                         v
-                 FRAUD DETECTION SERVICE
-                         |
-              +----------+----------+
-              |          |          |
-              v          v          v
-           HIGH-VALUE  HIGH-RISK  DUPLICATE /
-           DETECTION   CATEGORY   RAPID DETECTION
-                       DETECTION
-                         |
-                         v
-                  RISK CLASSIFICATION
-                         |
-                         v
-                 TRANSACTION REPOSITORY
-                         |
-                         v
-                    POSTGRESQL
-Application Layers
-Controller Layer
 
-Receives HTTP requests, validates incoming transaction data and returns appropriate API responses.
+BAN-KAI INFINITY splits up tasks into specific code layers so the system stays reliable and easy to update:
+text
++-------------------------------------------------+
 
-Service Layer
+|               CLIENT / API REQUEST              |
++-------------------------------------------------+
+|
+v
++-------------------------------------------------+
 
-Contains the business logic responsible for evaluating transactions, applying fraud detection rules and determining risk severity.
+|               CONTROLLER LAYER                  |
+|       (Checks inputs for typing errors)         |
++-------------------------------------------------+
+|
+v
++-------------------------------------------------+
 
-Repository Layer
+|                SERVICE LAYER                    |
+|         (Runs the Fraud Rules Engine)           |
++-------------------------------------------------+
 
-Uses Spring Data JPA to communicate with the PostgreSQL database.
+         |                  |                  |
+         v                  v                  v
+[High-Value]       [High-Risk]        [Duplicate /]
+[Checking  ]       [Industries]       [Velocity   ]
 
-Entity Layer
+         |                  |                  |
+         +------------------+------------------+
+                        |
+                        v
++-------------------------------------------------+
 
-Defines the transaction data structure and its database representation.
+|            RISK LEVEL CLASSIFIER                |
++-------------------------------------------------+
+|
+v
++-------------------------------------------------+
 
-Exception Handling Layer
+|               REPOSITORY LAYER                  |
+|          (Prepares Database Queries)            |
++-------------------------------------------------+
+|
+v
++-------------------------------------------------+
 
-Provides centralised handling of validation errors and database integrity exceptions.
+|              POSTGRESQL DATABASE                |
++-------------------------------------------------+
+Use code with caution.
 
-6. Database Design
-   BAN-KAI INFINITY uses PostgreSQL as its relational database management system.
---------------
-Transaction records are persisted to support retrieval and transaction analysis.
+Layer Roles
 
-Transaction Data
-The transaction entity contains the following information:
+• Controller Layer: The front desk. It takes inbound requests, makes sure files aren't missing parts, and returns standard HTTP statuses.
+• Service Layer: The brains. It runs the rules calculations and assigns final danger ratings.
+• Repository Layer: The filing assistant. It maps your Java code actions directly to relational database query rows.
 
-Field
+6. Database Table Schema
 
-Description
+Transactions are saved inside a PostgreSQL table structured with the following fields:
 
-transactionId
+Field Name	Data Category	Description
+transactionId	String (Primary Key)	The unique tracking receipt ID for the transaction.
+customerId	String	The ID code of the customer making the transaction.
+amount	Decimal Number	The exact financial value of the transaction.
+category	String	The type of shop or transaction (e.g., TRANSFER, CRYPTO).
+suspicious	True / False	A true/false flag showing if any fraud rule was broken.
+fraudReason	String	A brief text code telling you why it was flagged.
+severity	Text Option	The danger rating: LOW, MEDIUM, or HIGH.
+createdAt	Date & Time	The timestamp showing exactly when it was saved.
 
-Unique transaction identifier.
 
-customerId
+7. REST API Reference
 
-Identifier of the customer initiating the transaction.
+• Base Local Address: http://localhost:8080
 
-amount
+Endpoint Directives
 
-Financial transaction amount.
 
-category
+Method	Web Address Link	Action Purpose
+POST	/api/transactions	Submits a new transaction to be checked and saved.
+GET	/api/transactions	Pulls back a list of all historical records.
+GET	/api/transactions/{transactionId}	Fetches a single specific transaction using its ID number.
 
-Transaction category.
 
-suspicious
+API Payload Example
 
-Indicates whether the transaction triggered a fraud rule.
 
-fraudReason
+1. Incoming Action Request (POST)
 
-Describes the fraud detection rule triggered.
-
-severity
-
-Assigned transaction risk classification.
-
-createdAt
-
-Timestamp indicating when the transaction was created.
-
-The application uses Spring Data JPA for database operations and transaction persistence.
-
-7. REST API Documentation
-   The application exposes RESTful endpoints for transaction submission and retrieval.
---------------
-Base URL
-http://localhost:8080
-Available Endpoints
-HTTP Method
-
-Endpoint
-
-Function
-
-POST
-
-/api/transactions
-
-Submit and evaluate a transaction.
-
-GET
-
-/api/transactions
-
-Retrieve all stored transactions.
-
-GET
-
-/api/transactions/{transactionId}
-
-Retrieve a specific transaction.
-
-Example: Submit a Transaction
-Request
-
+http
 POST /api/transactions
 Content-Type: application/json
-Request Body
-
+Use code with caution.
+json
 {
 "transactionId": "TXN001",
 "customerId": "CUSTOMER001",
 "amount": 15000,
 "category": "TRANSFER"
 }
-Example Response
+Use code with caution.
 
+2. Processed System Reply
+
+json
 {
 "transactionId": "TXN001",
 "amount": 15000,
@@ -292,167 +196,139 @@ Example Response
 "reason": "HIGH_VALUE_TRANSACTION",
 "severity": "HIGH"
 }
-Swagger UI
-Interactive API documentation is available through Swagger UI.
+Use code with caution.
 
-Once the application is running, navigate to:
+Opening the Visual Interface (Swagger UI)
 
+Once the server application is turned on and running locally, paste this web link into your browser to test live fields using a visual interface:
+text
 http://localhost:8080/swagger-ui/index.html
-
-Swagger allows developers to explore available endpoints, submit requests and inspect API responses.
+Use code with caution.
 
 8. Installation & Setup
-   Prerequisites
-   Before running the application, ensure the following are installed:
------------------
-Java 21 or compatible configured JDK.
-IntelliJ IDEA or another Java IDE.
-Docker Desktop (for containerised execution).
-Git.
-For local execution without Docker, PostgreSQL must also be installed and running.
 
-Clone the Repository
-git clone https://github.com/Straw-Hat-Lucian/fraud-rule-engine.git
-Navigate to the project directory:
 
+Prerequisites
+
+Before you begin, install these required components onto your computer:
+1. Java 21 Development Kit (JDK)
+2. Docker Desktop
+3. Git CLI
+4. Optional: PostgreSQL database software (only needed if you plan to run the app manually without using Docker).
+
+Downloading the Code
+
+Run these commands inside your computer's terminal:
+bash
+git clone https://github.com
 cd fraud-rule-engine
-9. Running with Docker
-   BAN-KAI INFINITY supports Docker Compose to simplify application deployment and database management.
----------------
-Docker Compose manages two primary services:
+Use code with caution.
 
-Application Container: Runs the Spring Boot application.
-Database Container: Runs PostgreSQL.
-Step 1: Configure Environment Variables
-Create a .env file in the project root directory.
+9. Running with Docker (Recommended Method)
 
-Add your PostgreSQL credentials:
+Docker automates setting up your app and database so they connect correctly right out of the box.
 
+Step 1: Create Your Settings File
+
+Create a new text file named exactly .env inside your root directory folder and paste in these database credentials:
+ini
 DB_USERNAME=postgres
-DB_PASSWORD=your_postgresql_password
-Replace the example password with your own database password.
+DB_PASSWORD=your_secure_postgresql_password
+Use code with caution.
 
-Step 2: Build and Start the Application
-Run:
+Step 2: Build and Boot Up
 
+Launch your combined app and database instances in background mode with this single command:
+bash
 docker compose up --build -d
-This builds the application image and starts the application and database containers.
+Use code with caution.
 
-Step 3: Verify Container Status
+Step 3: Check System Status
+
+Verify that both containers are up and running properly:
+bash
 docker compose ps
-Both application and database containers should be running.
+Use code with caution.
 
-Step 4: View Application Logs
-docker compose logs app
-Step 5: Stop the Application
+Step 4: Watch Server Output Logs
+
+Read the continuous system boot logs to ensure everything is working fine:
+bash
+docker compose logs -f app
+Use code with caution.
+
+Step 5: Shut Down the Project
+
+When you are done testing, turn off the application and clean up background tasks safely:
+bash
 docker compose down
-Database Persistence
-PostgreSQL uses a named Docker volume to preserve database data between container restarts.
+Use code with caution.
+⚠️ Warning: Avoid adding -v to the down command (docker compose down -v) unless you want to completely erase your saved database history.
 
-Important: Avoid using docker compose down -v unless you intentionally want to delete the persistent database volume and its stored data.
+10. Running Manually inside your IDE (IntelliJ)
 
-10. Running Locally Through IntelliJ IDEA
-    The application can also be executed directly through IntelliJ IDEA.
--------------
-Clone or open the project in IntelliJ IDEA.
-Ensure the required Java SDK is configured.
-Start PostgreSQL.
-Configure the database connection in application.properties.
-Build the project using Maven.
-Locate FraudRuleEngineApplication.java.
-Run the application.
-The Spring Boot application starts on port 8080 by default.
+1. Open up IntelliJ IDEA and import the project folder using the Maven Project import setting.
+2. Verify that your IDE project settings are set to build using Java 21.
+3. Make sure your local PostgreSQL database engine is active on your host machine.
+4. Update the database credentials inside the project settings file: src/main/resources/application.properties.
+5. Run the main Java startup file: FraudRuleEngineApplication.java.
 
 11. Automated Testing
-    BAN-KAI INFINITY includes automated unit tests using JUnit and Mockito.
------------------
-The tests evaluate the fraud detection service under different transaction scenarios.
 
-Test Coverage
-Normal transaction processing.
-High-value transaction detection.
-High-risk category detection.
-Rapid transaction detection.
-Duplicate transaction detection.
-Execute Tests
-Windows PowerShell
+The project contains unit testing frameworks that simulate transactions to make sure the code logic doesn't break over time.
 
+Scenarios Tested Automatically
+
+• Handling clear, harmless transaction flows.
+• Checking exact amount limits on high-value items.
+• Scanning for suspicious industry labels.
+• Tracking quick velocity spam flows and twin duplicate attempts.
+
+How to Run the Tests
+
+Open a terminal workspace inside the main directory and input:
+bash
+# For Windows machines:
 .\mvnw.cmd test
-Linux / macOS
 
+# For macOS or Linux machines:
 ./mvnw test
-A successful test execution should conclude with:
+Use code with caution.
+If your test run completes successfully without any logic errors, your console will print out:
+text
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+Use code with caution.
 
-BUILD SUCCESS
-12. Validation & Exception Handling
-    The application implements request validation and centralised exception handling to improve API reliability.
--------------
-Examples of handled HTTP responses include:
+12. Response Handlers & Exceptions
 
-HTTP Status
+The system translates complex server errors into easy-to-read web status codes:
 
-Description
+Web Status Code	Meanings	Simple Cause
+200 OK	Success	The transaction passed validation checks and was successfully saved.
+400 BAD REQUEST	Data Mistake	The request body was messy, misspelled, or missing fields.
+404 NOT FOUND	Missing File	You searched for a transactionId that doesn't exist in our records.
+409 CONFLICT	Duplicate ID	You tried to insert a transaction using an ID that is already taken.
 
-200 OK
 
-Transaction successfully processed.
+13. Security Setup
 
-400 Bad Request
-
-Invalid or incomplete transaction data.
-
-404 Not Found
-
-Requested transaction could not be found.
-
-409 Conflict
-
-Database integrity conflict.
-
-Fraud detection alerts do not automatically reject transactions. Suspicious transactions are processed, recorded and returned with their corresponding risk information.
-
-13. Security Considerations
-    The project incorporates basic security-conscious development practices:
--------------
-Environment variables are used to configure database credentials for Docker Compose.
-The .env file is excluded through .gitignore.
-The .dockerignore file excludes unnecessary files and sensitive local configuration from the Docker build context.
-Database credentials should never be committed to GitHub.
-Request validation is applied to incoming transaction data.
-Note: The current implementation is a development-stage application and does not yet include production authentication, authorisation or advanced secrets management.
+• Hidden Settings Configuration: Highly private database login details are kept outside your code files inside your local .env configuration template.
+• Leak Protections: Specific configuration filters (.gitignore, .dockerignore) stop confidential security passwords from accidentally leaking out onto public GitHub servers.
+• Payload Sanitation: Strict typing validations discard faulty data right away at the network gateway.
 
 14. Potential Future Enhancements
-    BAN-KAI INFINITY provides a foundation for further financial technology development.
-------------
-Potential enhancements include:
 
-Configurable fraud detection thresholds.
-Advanced customer transaction behaviour analysis.
-Machine learning-based fraud detection.
-Real-time transaction monitoring.
-Fraud analytics and reporting dashboard.
-Authentication and role-based access control.
-Audit logging and transaction history.
-Advanced risk scoring algorithms.
-Integration with external financial transaction services.
-15. Project Information
-    Project Name: BAN-KAI INFINITY
----------------
-Category: Financial Technology / Backend Development
+• 🔄 Live Threshold Controls: Adjust fraud rules dynamically via a dashboard without needing to turn off the server.
+• 🧠 Smart AI Analysis: Add machine-learning models to spot suspicious user habits automatically.
+• 📊 Admin Visualization Portal: Design a web interface panel for fraud analysts to manage alerts.
+• 🔐 Secure Login Infrastructure: Build username, password, and permissions controls (Spring Security) around all API access keys.
 
-Primary Language: Java
+15. Project Quick Facts
 
-Framework: Spring Boot
-
-Database: PostgreSQL
-
-Deployment: Docker & Docker Compose
-
-Repository: GitHub – BAN-KAI INFINITY
-
-
-BAN-KAI INFINITY
-Financial Transaction Intelligence. Fraud Detection. Risk Analysis.
-
-Built with Java, Spring Boot, PostgreSQL and Docker.
-
+• Project Category: Financial Technology / Backend Rule Engine
+• Core Language Technology: Java 21 (Spring Boot Framework)
+• Database Infrastructure: PostgreSQL Relational Database
+Would you like to build an API testing file next, or plan out how a user login feature would look? Let me know!
+• Deployment System: Multi-Stage Docker containers
