@@ -1,10 +1,12 @@
 package com.example.fraudruleengine;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import jakarta.validation.Valid;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.ResponseEntity;
 
 
 @RestController
@@ -40,7 +42,7 @@ public class TransactionController  {
     }
 
     @GetMapping("/{transactionId}")
-    public Optional<Transaction> getTransactionById(@PathVariable String transactionId){
-        return fraudDetectionService.getTransactionById(transactionId);
+    public ResponseEntity<Transaction> getTransactionById(@PathVariable String transactionId){
+        return fraudDetectionService.getTransactionById(transactionId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }
